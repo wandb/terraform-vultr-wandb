@@ -10,6 +10,7 @@ variable "cache_plan" {
 
 variable "cache_ipv4_access_list" {
   description = "A list of IPv4 addresses allowed to access the redis instance"
+  nullable = true
   type = list(string)
 }
 
@@ -33,15 +34,13 @@ resource "vultr_database" "cache" {
   redis_eviction_policy = "allkeys-lru"
   region = var.region
   tag = "wandb-${var.namespace}"
-  vpc_id = vultr_vpc2.wandb.id
-
-  #trusted_ips = distinct(concat(
-  #  var.ipv4_cidr_db_access
-  #))
+  #trusted_ips = distinct(concat(var.cache_ipv4_access_list, [ cidrhost(vultr_kubernetes.wandb.ip, 32 )]))
+  trusted_ips = var.cache_ipv4_access_list
+  vpc_id = var.vke_vpc_id
 }
 
-resource "vultr_database_user" "cache" {
-  database_id = vultr_database.cache.id
-  username    = "wandb"
-  password = var.cache_password
-}
+#resource "vultr_database_user" "cache" {
+#  database_id = vultr_database.cache.id
+#  username    = "wandb"
+#  password = var.cache_password
+#}

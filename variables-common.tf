@@ -9,3 +9,14 @@ variable "region" {
   nullable = false
   type     = string
 }
+
+variable "vultr_api_key" {
+  nullable = false
+  type = string
+}
+
+variable "vke_vpc_id" {
+  description = "This variable should be set *after* the initial terraform run, when the VPC if of the VKE cluster can be seen in the consol or via CLI. Setting this value will place databases in the VKE subnet."
+  nullable = true
+  type = string
+}

@@ -13,10 +13,11 @@ variable "vke_node_plan" {
   type        = string
 }
 
+
 ########################################
 # resources
 ########################################
-resource "vultr_kubernetes" "k8" {
+resource "vultr_kubernetes" "wandb" {
   region = var.region
   label     = "wandb-${var.namespace}"
   version = var.vke_k8s_version
@@ -30,5 +31,7 @@ resource "vultr_kubernetes" "k8" {
     max_nodes = 2
   }
 }
+
+
 
 

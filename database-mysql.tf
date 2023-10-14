@@ -10,6 +10,7 @@ variable "db_plan" {
 
 variable "db_ipv4_access_list" {
   description = "A list of IPv4 addresses allowed to access the database"
+  nullable = true
   type = list(string)
 }
 
@@ -30,15 +31,22 @@ resource "vultr_database" "sql" {
   maintenance_dow = "sunday"
   maintenance_time = "02:00"
   mysql_long_query_time = 2
+  mysql_require_primary_key = true
   mysql_slow_query_log = true
   plan = var.db_plan
   region = var.region
   tag = "wandb-${var.namespace}"
-  vpc_id = vultr_vpc2.wandb.id
+  trusted_ips = var.db_ipv4_access_list
+  vpc_id = var.vke_vpc_id
 
-  #trusted_ips = distinct(concat(
-  #  var.ipv4_cidr_db_access
-  #))
+  mysql_sql_modes = [
+    "ANSI",
+    "ERROR_FOR_DIVISION_BY_ZERO",
+    "NO_ENGINE_SUBSTITUTION",
+    "NO_ZERO_DATE",
+    "NO_ZERO_IN_DATE",
+    "STRICT_ALL_TABLES",
+  ]
 }
 
 resource "vultr_database_db" "wandb_local" {
@@ -49,6 +57,5 @@ resource "vultr_database_db" "wandb_local" {
 resource "vultr_database_user" "wandb" {
   database_id = vultr_database.sql.id
   username    = "wandb"
-  encryption = "mysql_native_password"
   password = var.db_password
 }

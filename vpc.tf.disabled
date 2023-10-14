@@ -24,3 +24,5 @@ resource "vultr_vpc2" "wandb" {
 }
 
 
+
+
