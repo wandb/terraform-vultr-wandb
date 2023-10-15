@@ -32,21 +32,17 @@ data "vultr_instance" "first_k8s_node" {
 # resources
 ########################################
 resource "vultr_kubernetes" "wandb" {
-  region  = var.region
   label   = "wandb-${var.namespace}"
+  region  = var.region
   version = var.vke_k8s_version
 
   node_pools {
+    auto_scaler   = true
+    label         = "wandb-${var.namespace}"
+    max_nodes     = 2
+    min_nodes     = 1
     node_quantity = 1
     plan          = "vc2-2c-4gb"
-    label         = "wandb-${var.namespace}"
-    auto_scaler   = true
-    min_nodes     = 1
-    max_nodes     = 2
   }
 }
-
-
-
-
 
